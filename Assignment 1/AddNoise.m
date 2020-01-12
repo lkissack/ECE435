@@ -1,12 +1,23 @@
 function [] = AddNoise(DicomAddress,NoiseStats)
 %NoiseStats = [Mean, Std]
 
-originalImage = dicomread(DicomAddress);
-info = dicominfo(DicomAddress)
-firstSlice = originalImage(:,:,:,1);
+image = dicomread(DicomAddress);
+%info = dicominfo(DicomAddress)
+
+%what are the dimensions of the image?
+[rows, cols, samples, slices] = size(image);
+
+firstSlice = image(:,:,:,1);
+
+%replace all negative entries with 0
+firstSlice = max(firstSlice, 0);
+
+%Save as the original
+
 
 %for testing purposes
 imshow(firstSlice, [])
+
 
 %replace negative values in slice with 0
 

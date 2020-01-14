@@ -3,8 +3,9 @@ function [Iout,MSE_pre, MSE_post] = GaussianFiltering(OrgImgAdd,NoisyImgAdd, n,s
 MSE_pre = immse(OrgImgAdd, NoisyImgAdd);
 
 %Generate n X n Gaussian Filter
+G = fspecial('gaussian',n,std);%not recommended by MATLAB
 
-
+%use two forloops?
 
 end
 

@@ -1,4 +1,10 @@
 function [Iout,MSE_pre, MSE_post] = GaussianFiltering(OrgImgAdd,NoisyImgAdd, n,std)
+%calculate MSE between original image and noisy image
+MSE_pre = immse(OrgImgAdd, NoisyImgAdd);
+
+%Generate n X n Gaussian Filter
+
+
 
 end
 

@@ -1,8 +1,7 @@
 function [NoisyImg, MSE] = AddNLNoise(DicomAddress, NoiseType, NoiseChr)
 %NoiseType - string
 %NoiseChr = variance or noise density dependant on provided noise type
-
-%use MATLAB'S imnoise fn
+%uses MATLAB'S imnoise fn
 
 image = dicomread(DicomAddress);
 %info = dicominfo(DicomAddress)
@@ -20,10 +19,10 @@ original = mat2gray(firstSlice);%converts to double
 
 NoisyImg = imnoise(original, NoiseType,NoiseChr);
 
-%MSE
+%MSE - alternatively MATLAB predefined MSE: immse(original, NoisyImg)
 diff = (original - NoisyImg).^2;
 total = sum(diff(:));
-MSE = total/(rows*cols)
+MSE = total/(rows*cols);
 
 %save image
 imwrite(NoisyImg,sprintf('%s.png',NoiseType));

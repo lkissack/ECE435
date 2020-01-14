@@ -28,6 +28,7 @@ diff = (original - NoisyImg).^2;
 total = sum(diff(:));
 MSE = total/(rows*cols)
 
-
+%save image
+imwrite(NoisyImg,sprintf('%s.png',NoiseType));
 end
 

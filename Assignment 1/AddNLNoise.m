@@ -20,9 +20,6 @@ original = mat2gray(firstSlice);%converts to double
 
 NoisyImg = imnoise(original, NoiseType,NoiseChr);
 
-%for testing purposes
-imshow(NoisyImg,[])
-
 %MSE
 diff = (original - NoisyImg).^2;
 total = sum(diff(:));
@@ -30,5 +27,13 @@ MSE = total/(rows*cols)
 
 %save image
 imwrite(NoisyImg,sprintf('%s.png',NoiseType));
+
+%plot the two images together
+subplot(1,2,1);
+imshow(original, []);
+title("Original Image");
+subplot(1,2,2);
+imshow(NoisyImg,[]);
+title({sprintf('Noisy Image (%s)',NoiseType);sprintf("Noise Characteristic: %d", NoiseChr)});
 end
 

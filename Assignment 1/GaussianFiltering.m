@@ -10,8 +10,9 @@ finalImg = paddedImg;%remove extra zeros at end
 paddedImg(1+ padding: padding + rows, 1 + padding : padding + cols) = OrgImgAdd;
 
 %Generate n X n Gaussian Filter
-%G = fspecial('gaussian',n,std);%not recommended by MATLAB
-G = 2*ones(n,n);
+G = fspecial('gaussian',n,std);%not recommended by MATLAB
+%for testing purposes
+%G = 2*ones(n,n);
 %not sure if this needs to be rotated?
 
 %use two for loops?

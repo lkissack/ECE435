@@ -22,9 +22,10 @@ paddedImg(1+ padding: padding + rows, 1 + padding : padding + cols) = original;
 G = fspecial('gaussian',n,std);%not recommended by MATLAB
 %for testing purposes
 %G = [1 2 3; 4 5 6; 7 8 9];
+
 %not sure if this needs to be rotated?
-%G = flip(G,1);
-%G = flip(G,2);
+G = flip(G,1);
+G = flip(G,2);
 
 %use two for loops
 for i = 1:rows + padding

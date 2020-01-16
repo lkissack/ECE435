@@ -1,12 +1,12 @@
 function [Iout,MSE_pre, MSE_post] = GaussianFiltering(OrgImgAdd,NoisyImgAdd, n,std)
 original = imread(OrgImgAdd);
-original = mat2gray(original);
+original = mat2gray(original);%use im2double instead?
 noisy = imread(NoisyImgAdd);
-noisy = mat2gray(noisy);
+noisy = mat2gray(noisy);%use im2double instead?
 
+%for testing
 % original = 3*ones(8,8);
 % noisy = [3.1*ones(1,8);3*ones(1,8);3.05*ones(1,8);2.8*ones(1,8);3.1*ones(1,8);3*ones(1,8);3.05*ones(1,8);2.8*ones(1,8)]
-
 
 %calculate MSE between original image and noisy image
 MSE_pre = immse(original, noisy)
@@ -23,8 +23,8 @@ G = fspecial('gaussian',n,std);%not recommended by MATLAB
 %for testing purposes
 %G = [1 2 3; 4 5 6; 7 8 9];
 %not sure if this needs to be rotated?
-G = flip(G,1);
-G = flip(G,2);
+%G = flip(G,1);
+%G = flip(G,2);
 
 %use two for loops
 for i = 1:rows + padding

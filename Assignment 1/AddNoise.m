@@ -1,4 +1,4 @@
-function [] = AddNoise(DicomAddress,NoiseStats)
+function [NoisyImg] = AddNoise(DicomAddress,NoiseStats)
 %Function to add Gaussian Noise to image without using MATLAB imnoise fn
 Mean = NoiseStats(1);
 Std = NoiseStats(2);
@@ -6,7 +6,7 @@ Std = NoiseStats(2);
 image = dicomread(DicomAddress);
 %info = dicominfo(DicomAddress)
 
-%what are the dimensions of the image?
+%determine dimensions of file
 [rows, cols, samples, slices] = size(image);
 
 firstSlice = image(:,:,:,1);
@@ -14,39 +14,31 @@ firstSlice = image(:,:,:,1);
 %replace all negative values in slice with 0
 firstSlice = max(firstSlice, 0);
 
-original = firstSlice;
-
 %Normalize into [0,1] range and save as original .png
 original = mat2gray(firstSlice);%converts to double
-imwrite(original,'Testfile.png');
+imwrite(original,'OrgImg.png');
 
-%for testing purposes
-%Im1 = imshow(firstSlice, []);
-%imshow(original, [])
-
-%random returns float
+%random returns float/double
 gNoise = random('Normal', Mean, Std,[rows,cols]);
 
 %normalize gaussian
 noise = mat2gray(gNoise);
 
 %Add noise to original
-gImg = mat2gray(original + noise);
-
-
-%Im2 = imshow(gImg,[]);
-subplot(1,2,1);
-imshow(firstSlice, []);
-title("Original Image");
-subplot(1,2,2);
-imshow(gImg,[]);
-title({"Noisy Image (Gaussian)";sprintf("Mean = %d Std = %d", Mean,Std)});
+gImg = original + noise;
 
 %save new images as OrgImg.png and GaussianNoise.png in SAME folder as
 %original
-% final = mat2gray(gImg);
-% imwrite(final,"FinalTestfile.png")
+NoisyImg = mat2gray(gImg);
+imwrite(NoisyImg,'GaussianNoise.png')
 
+%Plot original and noisy slices next to each other
+subplot(1,2,1);
+imshow(original, []);
+title("Original Image");
+subplot(1,2,2);
+imshow(NoisyImg,[]);
+title({"Noisy Image (Gaussian)";sprintf("Mean = %d Std = %d", Mean,Std)});
 
 end
 

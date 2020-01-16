@@ -7,6 +7,9 @@ function [Iout] = NLFiltering(OrgImgAdd,n)
 original = imread(OrgImgAdd);
 original = mat2gray(original);
 
-
+%based upon MATLAB nlfilter documentation
+medianfilter = @(x) median(x(:));
+Iout = nlfilter(original,[n n], medianfilter);
+imshow(Iout);
 end
 

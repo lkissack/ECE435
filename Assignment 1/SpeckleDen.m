@@ -1,5 +1,4 @@
 function [Iout, MSE_pre, MSE_post] = SpeckleDen(DICOMAddress, n, var_speckle)
-%
 image = dicomread(DICOMAddress);
 
 [rows, cols, samples, slices] = size(image);
@@ -13,7 +12,6 @@ for slice = 1:n
 end
 MSE_pre = immse(original, noisy(:,:,:,1))
 noisyAvg = mean(noisy, 4);
-%noisyAvg = mat2gray(noisyAvg);
 MSE_post = immse(original, noisyAvg)
 Iout = noisyAvg;
 

@@ -4,6 +4,7 @@ image = imread(imageAddress);
 %uses zero padding by default
 correlated = imfilter(image, Fhor, 'corr');
 convoluted = imfilter(image, Fhor, 'conv');
+
 subplot(1,2,1)
 imshow(correlated)
 title('Correlated')

@@ -10,6 +10,14 @@ original = mat2gray(original);
 %based upon MATLAB nlfilter documentation
 medianfilter = @(x) median(x(:));
 Iout = nlfilter(original,[n n], medianfilter);
-imshow(Iout);
+
+subplot(1,2,1);
+imshow(original, []);
+title("Original Image");
+subplot(1,2,2);
+imshow(Iout,[]);
+title(sprintf('Median Filter n = %d',n));
+
+
 end
 

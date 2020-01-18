@@ -32,9 +32,11 @@ for k = 1:rows
 end
 
 %for testing purposes
-%imshow(imgHE, []);
+imshow(imgHE, []);
+%THIS IS NO LONGER IN UINT8
+imgHE = uint8(imgHE*256);
 
-%generate histogram of new image
+%generate histogram of new image - this is not working?
 heHist = imhist(imgHE);
 
 %Save original and equalized

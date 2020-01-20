@@ -23,11 +23,13 @@ denoised = filtered(padding +1: rows+ padding, padding + 1:padding +cols, :);
 imwrite(img, '1-Noisy.png');
 imwrite(denoised, '2-Denoised.png');
 
-%for testing purposes
-% subplot(1,2,1);
-% imshow(img, []);
-% subplot(1,2,2);
-% imshow(denoised, []);
+%display results
+subplot(1,2,1);
+imshow(img, []);
+title('Noisy Image');
+subplot(1,2,2);
+imshow(denoised, []);
+title(sprintf('Denoised Image n = %d',wsize));
 
 end
 

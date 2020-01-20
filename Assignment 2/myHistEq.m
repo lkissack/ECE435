@@ -49,5 +49,14 @@ saveas(oHist, 'OriginalHistogram.png');
 hHist = bar(heHist);
 title('Equalized Histogram');
 saveas(hHist, 'EqualizedHistogram.png');
+
+subplot(1,2,1);
+imshow(gray, []);
+title('Original Image');
+subplot(1,2,2);
+imshow(imgHE, []);
+%title(sprintf('Denoised Image n = %d',wsize));
+
+
 end
 

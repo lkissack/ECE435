@@ -10,9 +10,12 @@ gray = rgb2gray(img);
 %for testing purposes
 %imshow(gray, [])
 
+subplot(2,2,1);
 %2. Histogram generation
 orgHist = imhist(gray);
-%should print for 2019b, does not seem to for 2018a
+% to display the histogram
+imhist(gray);
+title("Original Histogram");
 
 %3. Probability Array
 totalpx = rows*cols;
@@ -22,41 +25,52 @@ pHist = orgHist/totalpx;
 cHist = cumsum(pHist);
 
 %5. Transformation Function
+%leave as double for now - need to scale back to uint8 before generating
+%histogram again
 imgHE = zeros(rows, cols);
 
 %not a very fast way to perform this transformation
+% for k = 1:rows
+%     for m = 1:cols
+%      imgHE(k,m) = (255)/(rows*cols)*cHist(gray(k,m));
+%        %imgHE(k,m) = (255)*cHist(gray(k,m));
+%     end
+% end
+
+%Better way to perform calculation
+Tk = ((255)/(rows*cols))*cHist;
 for k = 1:rows
     for m = 1:cols
-    imgHE(k,m) = (255)/(rows*cols)*cHist(gray(k,m));
+     imgHE(k,m) = Tk(gray(k,m));
     end
 end
 
-%for testing purposes
-imshow(imgHE, []);
-%THIS IS NO LONGER IN UINT8
-imgHE = uint8(imgHE*256);
+%attempt to put back into uint8? - Not sure if this is required?
+imgHE = uint8(mat2gray(imgHE)*255);
 
 %generate histogram of new image - this is not working?
+subplot(2,2,2);
 heHist = imhist(imgHE);
+imhist(imgHE);
+title("Equalized Histogram");
 
 %Save original and equalized
 imwrite(gray, '3-LowContrast.png');
 imwrite(imgHE, '4-HistogramEqualized.png');
 
-oHist = bar(orgHist);
-title('Original Histogram');
-saveas(oHist, 'OriginalHistogram.png');
-hHist = bar(heHist);
-title('Equalized Histogram');
-saveas(hHist, 'EqualizedHistogram.png');
+% oHist = bar(orgHist);
+% title('Original Histogram');
+% saveas(oHist, 'OriginalHistogram.png');
+% hHist = bar(heHist);
+% title('Equalized Histogram');
+% saveas(hHist, 'EqualizedHistogram.png');
 
-subplot(1,2,1);
+subplot(2,2,3);
 imshow(gray, []);
 title('Original Image');
-subplot(1,2,2);
+subplot(2,2,4);
 imshow(imgHE, []);
-%title(sprintf('Denoised Image n = %d',wsize));
-
+title('Equalized Image');
 
 end
 

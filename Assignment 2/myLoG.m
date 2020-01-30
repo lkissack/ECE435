@@ -22,13 +22,8 @@ Lk = L.*e;
 kernel = Lk;
 
 %force sum of elements to 0?
-%Not sure how to do this?
-%needs a certain number of elements?
-sum_K = sum(kernel, 'all');
-
-if sum_K < 0
-    kernel = zeros(wsize, wsize);
-end 
-   
+%subtract average from each element so sum is zero?
+kernel = kernel - mean(kernel,'all');
+sum_K = sum(kernel, 'all')
 end
 

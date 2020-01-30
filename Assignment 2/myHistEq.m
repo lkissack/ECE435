@@ -4,8 +4,12 @@ function [imgHE, orgHist, heHist] = myHistEq(img)
 %heHist = equalized images histogram
 
 %1. check image properties
-gray = rgb2gray(img);
-[rows, cols] = size(gray);
+[rows, cols, colours] = size(img);
+gray = img;
+if colours == 3
+    gray = rgb2gray(img);
+    [rows, cols] = size(gray);
+end
 
 %for testing purposes
 %imshow(gray, [])

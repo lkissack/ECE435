@@ -5,14 +5,11 @@ function [imgHE, orgHist, heHist] = myHistEq(img)
 
 %1. check image properties
 [rows, cols, colours] = size(img);
-gray = img;
+gray = uint8(img);
 if colours == 3
     gray = rgb2gray(img);
     [rows, cols] = size(gray);
 end
-
-%for testing purposes
-%imshow(gray, [])
 
 subplot(2,2,1);
 %2. Histogram generation
@@ -48,11 +45,11 @@ for k = 1:rows
      imgHE(k,m) = Tk(gray(k,m));
     end
 end
+%since Tk contains small doubles of probability for intensity
+a = mat2gray(imgHE)*255;
+imgHE = uint8(a);
 
-%attempt to put back into uint8? - Not sure if this is required?
-imgHE = uint8(mat2gray(imgHE)*255);
-
-%generate histogram of new image - this is not working?
+%generate histogram of new image
 subplot(2,2,2);
 heHist = imhist(imgHE);
 imhist(imgHE);

@@ -11,6 +11,7 @@ if colours == 3
     [rows, cols] = size(gray);
 end
 
+figure(1);
 subplot(2,2,1);
 %2. Histogram generation
 orgHist = imhist(gray);
@@ -39,10 +40,13 @@ imgHE = zeros(rows, cols);
 % end
 
 %Better way to perform calculation
+%but issues if value of gray = 0
 Tk = ((255)/(rows*cols))*cHist;
 for k = 1:rows
     for m = 1:cols
-     imgHE(k,m) = Tk(gray(k,m));
+        %add plus one to prevent issues when gray = 0
+        %not concerned about gray =255 since Tk(256) exists
+        imgHE(k,m) = Tk(gray(k,m)+1);
     end
 end
 %since Tk contains small doubles of probability for intensity
@@ -50,6 +54,7 @@ a = mat2gray(imgHE)*255;
 imgHE = uint8(a);
 
 %generate histogram of new image
+
 subplot(2,2,2);
 heHist = imhist(imgHE);
 imhist(imgHE);
@@ -72,6 +77,5 @@ title('Original Image');
 subplot(2,2,4);
 imshow(imgHE, []);
 title('Equalized Image');
-
 end
 

@@ -1,6 +1,7 @@
 function [kernel] = myLoG(wsize, std)
 
 Gk = myGaussian(wsize, std);
+%remove normalization included in myGaussian
 e = Gk * 2*pi*std^2;
 
 %assuming wsize is an odd number since it would be impossible to be
@@ -24,6 +25,6 @@ kernel = Lk;
 %force sum of elements to 0?
 %subtract average from each element so sum is zero?
 kernel = kernel - mean(kernel,'all');
-sum_K = sum(kernel, 'all')
+sum_K = sum(kernel, 'all');
 end
 

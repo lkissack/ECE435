@@ -28,7 +28,7 @@ imshow(img,[]);
 title('Original');
 subplot(2,2,2);
 imshow(smoothed, []);
-title('Smoothe');
+title('Smoothed');
 subplot(2,2,3);
 imshow(edged,[]);
 title('Edge');

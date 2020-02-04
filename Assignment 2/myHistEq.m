@@ -31,15 +31,6 @@ cHist = cumsum(pHist);
 %histogram again
 imgHE = zeros(rows, cols);
 
-%not a very fast way to perform this transformation
-% for k = 1:rows
-%     for m = 1:cols
-%      imgHE(k,m) = (255)/(rows*cols)*cHist(gray(k,m));
-%        %imgHE(k,m) = (255)*cHist(gray(k,m));
-%     end
-% end
-
-%Better way to perform calculation
 %but issues if value of gray = 0
 Tk = ((255)/(rows*cols))*cHist;
 for k = 1:rows
@@ -57,6 +48,7 @@ imgHE = uint8(a);
 
 subplot(2,2,2);
 heHist = imhist(imgHE);
+%displays histogram
 imhist(imgHE);
 title("Equalized Histogram");
 
@@ -64,18 +56,22 @@ title("Equalized Histogram");
 imwrite(gray, '3-LowContrast.png');
 imwrite(imgHE, '4-HistogramEqualized.png');
 
-% oHist = bar(orgHist);
-% title('Original Histogram');
-% saveas(oHist, 'OriginalHistogram.png');
-% hHist = bar(heHist);
-% title('Equalized Histogram');
-% saveas(hHist, 'EqualizedHistogram.png');
-
+%finish plotting them
 subplot(2,2,3);
 imshow(gray, []);
 title('Original Image');
 subplot(2,2,4);
 imshow(imgHE, []);
 title('Equalized Image');
+
+%save histograms as images
+figure(3);
+oHist = bar(orgHist);
+title('Original Histogram');
+saveas(oHist, 'OriginalHistogram.png');
+figure(4);
+hHist = bar(heHist);
+title('Equalized Histogram');
+saveas(hHist, 'EqualizedHistogram.png');
 end
 

@@ -38,6 +38,7 @@ denoised = imfilter(original,gk,'conv');
 [Gmag, Gdir] = imgradient(denoised,'sobel');
 %should this be pointwise multiplication?
 
+
 %figure out which method this should be
 G = -1*(norm(Gx)^2 + norm(Gy)^2);
 
@@ -46,6 +47,11 @@ fprintf('Select seed points on original image\n');
 [xi_seed, yi_seed] = getpts();
 initial_seed = [xi_seed,yi_seed]; %points now organized as [x1, y1; x2 y2; ...] 
 
+% figure(2);
+% imshow(Gx, []);
+% 
+% figure(3);
+% imshow(Gy, []);
 
 % optimization loop
 
@@ -67,14 +73,17 @@ energy = zeros(k,k, 3);
 %(:,:,2) - curvature
 %(:,:,3) - gradient
 
+%NEXT UP: implement for loop for each point on the snake
 point_index = 2;
 min_e = inf;
 %assume the current point is the best
-optimal_point = point;
+optimal_point = point
 for i = 1:k %-range:range
     for j = 1:k % -range:range
         %[i,j]
-        modified_point = point + [-range + i - 1, -range + j - 1];        
+        %define as uint64 since it is used for indexing and MATLAB has a
+        %hissy fit otherwise
+        modified_point = uint64(point + [-range + i - 1, -range + j - 1]);        
         modsnake = testsnake;
         modsnake(point_index,:) = modified_point;
         %do the elements of the snake need to be re-ordered?
@@ -82,7 +91,8 @@ for i = 1:k %-range:range
         energy(i,j,2) = curvature(modsnake);
         
         %this is not working
-        norm(Gx(modified_point))
+        %B = Gx(uint8(modified_point))
+        %A = original(modified_point(:))
         energy(i,j,3) = (norm(Gx(modified_point))^2 + norm(Gy(modified_point))^2);   
         etotal = alpha*energy(i,j,1) + beta*energy(i,j,2) - gamma*energy(i,j,3);
         if etotal<min_e
@@ -95,6 +105,7 @@ end
 %etotal = alpha*energy(:,:,1) + beta*energy(:,:,2) - gamma*energy(:,:,3);
 %update vi based on smallest value of etotal
 %find location of minimum value in etotal
+%this is not propagating as it should??
 testsnake(point_index,:) = optimal_point
 
 

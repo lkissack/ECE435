@@ -2,12 +2,12 @@ clear all
 clc
 
 % Minimization Parameters
-alpha = 0.0;
-gamma = 0.25;
-beta = 0.0;
+alpha = 0.05;
+gamma = 0.4;
+beta = 0.08;
 max_itr      = 100;
 GaussWinSize = 5;
-GradT        = .01;%Gradient Threshold
+GradT        = .001;%Gradient Threshold
 
 % Loading the image and converting that to a grey-level image if needed
 original  = imread('CTImage.png');
@@ -57,8 +57,10 @@ hold on
 %plot(initial_seed(:,1),initial_seed(:,2),'go','MarkerSize',5);
 
 %aparently convhull requires input as double
-k1 = convhull(initial_seed);
-plot(initial_seed(k1,1), initial_seed(k1,2),'g');
+%k1 = boundary(initial_seed);
+k1h = convhull(initial_seed);
+%plot(initial_seed(k1,1), initial_seed(k1,2),'g');
+plot(initial_seed(k1h,1), initial_seed(k1h,2),'b');
 %% Snake Initialization
 snake = initial_seed
 k = 5;
@@ -129,8 +131,11 @@ for iteration = 1:max_itr
 end
 
 snake
-k2 = convhull(snake);
-plot(snake(k2,1),snake(k2,2),'m');
+%k2 = convhull(snake);
+k2 = boundary(snake);
+%plot(snake(k2,1),snake(k2,2),'m');
+k2h = convhull(snake);
+plot(snake(k2h,1),snake(k2h,2),'c');
 
 %% Energy Functions
 

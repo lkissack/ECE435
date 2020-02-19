@@ -2,12 +2,12 @@ clear all
 clc
 
 % Minimization Parameters
-alpha = 0.05;
-gamma = 0.4;
+alpha = 0.001;
+gamma = 0.8;
 beta = 0.08;
 max_itr      = 100;
 GaussWinSize = 5;
-GradT        = .001;%Gradient Threshold
+GradT        = 0.06;%Gradient Threshold
 
 % Loading the image and converting that to a grey-level image if needed
 original  = imread('CTImage.png');
@@ -63,8 +63,13 @@ k1h = convhull(initial_seed);
 plot(initial_seed(k1h,1), initial_seed(k1h,2),'b');
 %% Snake Initialization
 snake = initial_seed
-k = 5;
+k = 11;
 range = floor(k/2);
+
+% alpha = 0.1;
+% gamma = 0.4;
+% beta = 0.1;
+% max_itr      = 100;
 
 %modify location of point
 energy = zeros(k,k, 3);
@@ -92,6 +97,10 @@ for iteration = 1:max_itr
                 %+- range centers around point of interest
                 modified_point = point + [(-range + (i - 1)),(-range + (j - 1))];
                 
+                %for modified points past the boundary
+                modified_point(modified_point <= 0) = 1;
+                modified_point(modified_point >=612) = 611;
+                
                 modsnake = snake;
                 modsnake(point_index,:) = modified_point;
                 %do the elements of the snake need to be re-ordered?
@@ -108,8 +117,12 @@ for iteration = 1:max_itr
         end
         %might have to find optimal stuff out here to normalize the energy first
         
-        energy(:,:,1) = normalize(energy(:,:,1),'range');
-        energy(:,:,2) = normalize(energy(:,:,2),'range');
+%         energy(:,:,1) = normalize(energy(:,:,1),'range');
+%         energy(:,:,2) = normalize(energy(:,:,2),'range');
+
+        energy(:,:,1) = energy(:,:,1)/(max(energy(:,:,1),[],'all'));
+        energy(:,:,2) = energy(:,:,2)/(max(energy(:,:,2),[],'all'));
+
         %normalize this one globally
         %energy(:,:,3) = normalize(energy(:,:,3),'range');
         
@@ -126,11 +139,15 @@ for iteration = 1:max_itr
         %subtract range for position relative to point
         actual_point = point + [(-range + x -1), (-range + y -1)];
         %update the snake
+        actual_point(actual_point <=0) = 1;
+        actual_point(actual_point >=612) = 611;
         snake(point_index,:) = actual_point;    
     end
 end
 
 snake
+energy
+etotal
 %k2 = convhull(snake);
 k2 = boundary(snake);
 %plot(snake(k2,1),snake(k2,2),'m');

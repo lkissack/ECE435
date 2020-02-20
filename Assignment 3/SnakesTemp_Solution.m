@@ -2,9 +2,9 @@ clear all
 clc
 
 % Minimization Parameters
-alpha = 0.00;
-gamma = 0.5;
-beta = 0.00;
+alpha = 1;
+gamma = 10;
+beta = .1;
 max_itr      = 100;
 GaussWinSize = 5;
 GradT        = 0.4;%Gradient Threshold
@@ -47,7 +47,7 @@ k1h = convhull(initial_seed);
 plot(initial_seed(k1h,1), initial_seed(k1h,2),'b','LineWidth',2);
 %% Snake Initialization
 snake = initial_seed
-k = 11;
+k = 25;
 range = floor(k/2);
 
 energy = zeros(k,k, 3);
@@ -67,17 +67,13 @@ for iteration = 1:max_itr
         for i = 1:k %-range:range
             for j = 1:k % -range:range
                 %[i,j]
-                %define as uint64 since it is used for indexing and MATLAB has a
-                %hissy fit otherwise
-                %modified_point = point + uint64([(-range + i - 1),( -range + j - 1)]); 
-                
                 %i-1 and j-1 to account for matlab indexing
                 %+- range centers around point of interest
                 modified_point = point + [(-range + (i - 1)),(-range + (j - 1))];
                 
-                %for modified points past the boundary
-%                 modified_point(modified_point <= 0) = 1;
-%                 modified_point(modified_point >=612) = 611;
+                %Do not let points move past the boundary
+                modified_point(modified_point <= 0) = 1;
+                modified_point(modified_point >=612) = 611;
                 
                 modsnake = snake;
                 modsnake(point_index,:) = modified_point;
@@ -106,9 +102,14 @@ for iteration = 1:max_itr
         
         %calculate the total energy
         etotal = alpha*energy(:,:,1) + beta*energy(:,:,2) - gamma*energy(:,:,3);
-        [min_e,idx] = min(etotal, [],'all','linear');
+        %if multiple minimum values are found, the first point is selected
+%         [min_e,idx] = min(etotal, [],'all','linear');      
+%         [x,y] = ind2sub(size(etotal),idx);
         
-        [x,y] = ind2sub(size(etotal),idx);
+        %if there are multiple minimum values, take the one in the middle
+        %results in gradient not moving very aggressively
+        mins = find(etotal(:)== min(etotal, [],'all'));      
+        [x,y] = ind2sub(size(etotal), median(mins));               
         
         %subtract range for position relative to point
         actual_point = point + [(-range + x -1), (-range + y -1)];
@@ -136,6 +137,11 @@ snake = [1,1;1,3;2,5;4,5;5,3;3,1];
 
 a = average_distance(snake);
 c = curvature(snake)
+
+test = [ 1 2 3; 4 5 1; 1 7 8]
+all = find(test(:)== min(test,[],'all'))
+[x,y] = ind2sub(size(test),median(all))
+test(x,y)
 
 %test with gamma = 0
 % snake should shrink to single point

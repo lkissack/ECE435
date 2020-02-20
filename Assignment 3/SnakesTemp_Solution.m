@@ -2,12 +2,12 @@ clear all
 clc
 
 % Minimization Parameters
-alpha = 0.001;
-gamma = 0.8;
-beta = 0.08;
+alpha = 0.00;
+gamma = 0.5;
+beta = 0.00;
 max_itr      = 100;
 GaussWinSize = 5;
-GradT        = 0.06;%Gradient Threshold
+GradT        = 0.4;%Gradient Threshold
 
 % Loading the image and converting that to a grey-level image if needed
 original  = imread('CTImage.png');
@@ -17,29 +17,16 @@ if dim == 3 % check the solution key to see if this is the correct way to do thi
 end
 imshow(original, []);
 
-% 1. Denoising by Gaussian filter - what is std?
+% 1. Denoising by Gaussian filter - what should std be?
 std = 1;
 gk = myGaussian(GaussWinSize,std);%check to make sure that this function is correct
 denoised = imfilter(original,gk,'conv');
 % 
-% % 2. Edge Detection using Sobel kernels
-% %assuming use of 3x3 sobel kernels
-% sobelx = [1 0 -1; 2 0 -2; 1 0 -1];
-% sobely = sobelx';
-% 
-% %generate Gaussian Kernel and perform convolution with Sobel filters
-% gkSx = imfilter(gk,sobelx,'conv');
-% gkSy = imfilter(gk,sobely,'conv');
-% 
-% Gxsobel = imfilter(original, gkSx,'conv');
-% Gysobel = imfilter(original, gkSy,'conv');
-% 
-[Gx,Gy] = imgradientxy(denoised, 'sobel');%not sure if this is cool or not
-[Gmag, Gdir] = imgradient(denoised,'sobel');
-%should this be pointwise multiplication?
+%% 2. Edge Detection using Sobel kernels
 
-
-%figure out which method this should be
+% Use pre-provided MATLAB functions
+[Gx,Gy] = imgradientxy(denoised, 'sobel');
+%[Gmag, Gdir] = imgradient(denoised,'sobel');
 
 G = (abs(Gx).^2 + abs(Gy).^2);
 g_max = max(G,[],'all');
@@ -52,32 +39,23 @@ fprintf('Select seed points on original image\n');
 %xi_seed = [499,362,496,541]';
 %yi_seed = [523,423,392,440]';
 initial_seed = [xi_seed,yi_seed]; %points now organized as [x1, y1; x2 y2; ...] 
-hold on
-%plot original as green circles
-%plot(initial_seed(:,1),initial_seed(:,2),'go','MarkerSize',5);
 
-%aparently convhull requires input as double
+%apparently convhull requires input as double
 %k1 = boundary(initial_seed);
 k1h = convhull(initial_seed);
 %plot(initial_seed(k1,1), initial_seed(k1,2),'g');
-plot(initial_seed(k1h,1), initial_seed(k1h,2),'b');
+plot(initial_seed(k1h,1), initial_seed(k1h,2),'b','LineWidth',2);
 %% Snake Initialization
 snake = initial_seed
 k = 11;
 range = floor(k/2);
 
-% alpha = 0.1;
-% gamma = 0.4;
-% beta = 0.1;
-% max_itr      = 100;
-
-%modify location of point
 energy = zeros(k,k, 3);
 %(:,:,1) - continuity
 %(:,:,2) - curvature
 %(:,:,3) - gradient
 
-%% Optimization Loop %%
+%% 3. Optimization Loop %%
 
 for iteration = 1:max_itr
     %for each point in the snake
@@ -98,8 +76,8 @@ for iteration = 1:max_itr
                 modified_point = point + [(-range + (i - 1)),(-range + (j - 1))];
                 
                 %for modified points past the boundary
-                modified_point(modified_point <= 0) = 1;
-                modified_point(modified_point >=612) = 611;
+%                 modified_point(modified_point <= 0) = 1;
+%                 modified_point(modified_point >=612) = 611;
                 
                 modsnake = snake;
                 modsnake(point_index,:) = modified_point;
@@ -115,22 +93,18 @@ for iteration = 1:max_itr
                 
             end
         end
-        %might have to find optimal stuff out here to normalize the energy first
-        
-%         energy(:,:,1) = normalize(energy(:,:,1),'range');
-%         energy(:,:,2) = normalize(energy(:,:,2),'range');
 
-        energy(:,:,1) = energy(:,:,1)/(max(energy(:,:,1),[],'all'));
-        energy(:,:,2) = energy(:,:,2)/(max(energy(:,:,2),[],'all'));
-
-        %normalize this one globally
-        %energy(:,:,3) = normalize(energy(:,:,3),'range');
-        
+        %Normalize based on max, min values NOT between [0,1]
+        %'normalize(...,'range')' leads to corner snakes
+        energy(:,:,1) = energy(:,:,1)/(max(energy(:,:,1),[],'all')-min(energy(:,:,1),[],'all'));
+        energy(:,:,2) = energy(:,:,2)/(max(energy(:,:,2),[],'all')-min(energy(:,:,2),[],'all'));
+                
         Range = max(energy(:,:,3),[],'all') - min(energy(:,:,3),[],'all');
         Egrad_norm = max(Range,grad_scale); 
         
         energy(:,:,3) = energy(:,:,3)/Egrad_norm;
         
+        %calculate the total energy
         etotal = alpha*energy(:,:,1) + beta*energy(:,:,2) - gamma*energy(:,:,3);
         [min_e,idx] = min(etotal, [],'all','linear');
         
@@ -145,14 +119,26 @@ for iteration = 1:max_itr
     end
 end
 
-snake
-energy
-etotal
+snake;
+energy;
+etotal;
 %k2 = convhull(snake);
 k2 = boundary(snake);
 %plot(snake(k2,1),snake(k2,2),'m');
 k2h = convhull(snake);
-plot(snake(k2h,1),snake(k2h,2),'c');
+hold on
+plot(snake(k2h,1),snake(k2h,2),'c', 'LineWidth', 2);
+
+
+%% Test Functions
+
+snake = [1,1;1,3;2,5;4,5;5,3;3,1];
+
+a = average_distance(snake);
+c = curvature(snake)
+
+%test with gamma = 0
+% snake should shrink to single point
 
 %% Energy Functions
 
@@ -174,22 +160,16 @@ function [a_dist] = average_distance(snake)
 end
 
 function [curv] = curvature(snake)
-    %handle edge/wrap cases first
-%     curv = norm(snake(size(snake,1),:) - 2*snake(1,:) + snake(2,:))^2;
-%     curv = curv + norm(snake(size(snake,1)- 1,:) - 2*snake(size(snake,1),:) + snake(1,:))^2;
-%     for vi = 2:size(snake,1) - 1        
-%         curv = norm(snake(vi - 1,:) - 2*snake(vi,:) + snake(vi +1,:))^2;
-%     end
-    
+     
     %handle edge/wrap cases first
     curv = norm(snake(size(snake,1),:) - 2*snake(1,:) + snake(2,:));
     curv = curv + norm(snake(size(snake,1)- 1,:) - 2*snake(size(snake,1),:) + snake(1,:));
-    for vi = 2:size(snake,1) - 1        
-        curv = norm(snake(vi - 1,:) - 2*snake(vi,:) + snake(vi +1,:));
+    for vi = 2:(size(snake,1) - 1)        
+        curv = curv + norm(snake(vi - 1,:) - 2*snake(vi,:) + snake(vi +1,:));
     end
     
 end
 
-function [] = total_energy
+function [min_e, idx] = minimum_energy(energy)
 
 end

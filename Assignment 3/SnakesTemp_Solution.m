@@ -108,8 +108,12 @@ for iteration = 1:max_itr
         
         %if there are multiple minimum values, take the one in the middle
         %results in gradient not moving very aggressively
-        mins = find(etotal(:)== min(etotal, [],'all'));      
-        [x,y] = ind2sub(size(etotal), median(mins));               
+        mins = find(etotal(:)== min(etotal, [],'all'));
+        m = mins(randperm(size(mins,1),1));
+%         [x,y] = ind2sub(size(etotal), median(mins));
+        %choose the minimum value randomly
+        [x,y] = ind2sub(size(etotal), m);
+        
         
         %subtract range for position relative to point
         actual_point = point + [(-range + x -1), (-range + y -1)];
@@ -136,12 +140,15 @@ plot(snake(k2h,1),snake(k2h,2),'c', 'LineWidth', 2);
 snake = [1,1;1,3;2,5;4,5;5,3;3,1];
 
 a = average_distance(snake);
-c = curvature(snake)
+c = curvature(snake);
 
-test = [ 1 2 3; 4 5 1; 1 7 8]
+test = [ 1 2 3; 4 5 1; 1 7 8];
 all = find(test(:)== min(test,[],'all'))
+
+m = all(randperm(size(all,1),1))
+
 [x,y] = ind2sub(size(test),median(all))
-test(x,y)
+%test(x,y)
 
 %test with gamma = 0
 % snake should shrink to single point

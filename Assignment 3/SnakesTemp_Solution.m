@@ -2,12 +2,9 @@ clear all
 clc
 
 % Minimization Parameters
-alpha = 1;
-gamma = 10;
-beta = .1;
 max_itr      = 100;
 GaussWinSize = 5;
-GradT        = 0.4;%Gradient Threshold
+GradT        = 0.01;%Gradient Threshold
 
 % Loading the image and converting that to a grey-level image if needed
 original  = imread('CTImage.png');
@@ -15,8 +12,7 @@ original  = imread('CTImage.png');
 if dim == 3 % check the solution key to see if this is the correct way to do this
     original = rgb2gray(original);
 end
-imshow(original, []);
-
+imshow(original,[]);
 % 1. Denoising by Gaussian filter - what should std be?
 std = 1;
 gk = myGaussian(GaussWinSize,std);%check to make sure that this function is correct
@@ -44,16 +40,30 @@ initial_seed = [xi_seed,yi_seed]; %points now organized as [x1, y1; x2 y2; ...]
 %k1 = boundary(initial_seed);
 k1h = convhull(initial_seed);
 %plot(initial_seed(k1,1), initial_seed(k1,2),'g');
+% plot(initial_seed(k1h,1), initial_seed(k1h,2),'b','LineWidth',2);
+%% Pre-plotting
+close all
+imshow(original, []);
+hold on
 plot(initial_seed(k1h,1), initial_seed(k1h,2),'b','LineWidth',2);
+
+
 %% Snake Initialization
-snake = initial_seed
-k = 25;
+snake = initial_seed;
+k = 51;
 range = floor(k/2);
 
 energy = zeros(k,k, 3);
 %(:,:,1) - continuity
 %(:,:,2) - curvature
 %(:,:,3) - gradient
+
+%% set parameters
+alpha = 0.1;
+gamma = 1;
+beta = 0.00;
+GradT        = 1;%Gradient Threshold
+grad_scale = GradT*(g_max-g_min);
 
 %% 3. Optimization Loop %%
 
@@ -129,9 +139,9 @@ energy;
 etotal;
 %k2 = convhull(snake);
 k2 = boundary(snake);
-%plot(snake(k2,1),snake(k2,2),'m');
+plot(snake(k2,1),snake(k2,2),'m');
 k2h = convhull(snake);
-hold on
+
 plot(snake(k2h,1),snake(k2h,2),'c', 'LineWidth', 2);
 
 
@@ -143,11 +153,11 @@ a = average_distance(snake);
 c = curvature(snake);
 
 test = [ 1 2 3; 4 5 1; 1 7 8];
-all = find(test(:)== min(test,[],'all'))
+all = find(test(:)== min(test,[],'all'));
 
-m = all(randperm(size(all,1),1))
+m = all(randperm(size(all,1),1));
 
-[x,y] = ind2sub(size(test),median(all))
+[x,y] = ind2sub(size(test),median(all));
 %test(x,y)
 
 %test with gamma = 0

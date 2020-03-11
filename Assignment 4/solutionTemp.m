@@ -18,23 +18,23 @@ images = size(T,1)
 
 for index = 1:images
     %read the row until the second label
-    image = split(T{index,1})
+    image = split(T{index,1});
     source = image(1) + ".pgm";
     destination = "";
     if image(2)=="D"
         %put the image in file D
-        destination = "/D";
+        destination = "D";
     elseif image(2)=="F"
         %put the image in file F
-        destination = "/F";
+        destination = "F";
     elseif image(2)=="G"
         %put the image in file G
-        destination = "/G";
+        destination = "G";
     end
     %check that the file hasn't been moved already
     %deals with duplicates in the .txt file
     if isfile(source)
-        movefile(source, destination);
+        status = movefile(source, destination);
     end
 end
 
@@ -42,7 +42,7 @@ end
 % % pre-process all the data that is in the D, F, G folders (resize, turn to 3-channel
 % % and do histogram eq.). See end of this script for a template of this function. 
 % 
-% % Problem 3: Load all the data in a datastore. The categorical labels are going to be
+%% Problem 3: Load all the data in a datastore. The categorical labels are going to be
 % % created based on the names of the folders each sample is in. hint:
 % % imageDatastore function. 
 % 
@@ -56,7 +56,7 @@ end
 % train_percent=0.7;
 % [imdsTrain,imdsTest]= %TO-DO
 % 
-% % Problem 4
+%% Problem 4
 % 
 % %extract HoG features
 % cellSize = [4 4];

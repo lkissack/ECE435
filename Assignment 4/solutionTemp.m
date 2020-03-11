@@ -65,7 +65,7 @@ end
 % % Now extract the features for the test set
 % % TO-DO
 % 
-% %Problem 5: Train an SVM classifier based on the HoG features (hint: fitcecoc function)
+%% Problem 5: Train an SVM classifier based on the HoG features (hint: fitcecoc function)
 % disp('Training the SVM classifier...');
 % SVMclassifier = %TO-DO
 % 
@@ -77,7 +77,7 @@ end
 % %TO-DO
 % title('Confusion Matrix for the SVM classifier using HoG features');
 % 
-% %Problem 6: Split the training set into training and validation. That will help
+%% Problem 6: Split the training set into training and validation. That will help
 % % monito the progress of the training process. 
 % 
 % valid_percent=0.3;
@@ -94,7 +94,7 @@ end
 % imageAugmenter = imageDataAugmenter(%TO-DO);
 % augimdsTrain = %TO-DO 
 % 
-% %Problem 7: create a ResNet-50
+%% Problem 7: create a ResNet-50
 % disp('Creating a resnet50 network.')
 % net = %TO-DO; 
 % 

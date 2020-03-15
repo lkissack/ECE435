@@ -60,9 +60,10 @@ end
 G = dir('G')
 for i = 1:size(G,1)
     %for testing purposes
-    imagename = "G\"+G(i).name;
+    imagename = char("G\"+G(i).name);
     if isfile(imagename)
-        image = preProcess(G(i), targetsize);
+        
+        image = preProcess(imread(imagename), targetsize);
         imwrite(image,imagename);
     end
 end
@@ -70,27 +71,27 @@ end
 D = dir('D')
 for i = 1:size(D,1)
     %for testing purposes
-   imagename =  "D\"+D(i).name;
+   imagename =  char("D\"+D(i).name);
     if isfile(imagename)
-        image = preProcess(D(i), targetsize);
+        image = preProcess(imread(imagename), targetsize);
         imwrite(image,imagename);
     end
 end
 
 %% Problem 3: Load all the data in a datastore. The categorical labels are going to be
-% % created based on the names of the folders each sample is in. hint:
-% % imageDatastore function. 
-% 
-% imds = %TO-DO
-% 
-% % show how many samples from each class there are. Ideally, the number of
-% % samples per class should be approximately the same. hint: countEachLabel
-% % function. 
-% 
-% % Randomly split the image datastore into training and testing  
-% train_percent=0.7;
-% [imdsTrain,imdsTest]= %TO-DO
-% 
+% created based on the names of the folders each sample is in. hint:
+% imageDatastore function. 
+
+imds = %TO-DO
+
+% show how many samples from each class there are. Ideally, the number of
+% samples per class should be approximately the same. hint: countEachLabel
+% function. 
+
+% Randomly split the image datastore into training and testing  
+train_percent=0.7;
+[imdsTrain,imdsTest]= %TO-DO
+
 %% Problem 4
 % 
 % %extract HoG features

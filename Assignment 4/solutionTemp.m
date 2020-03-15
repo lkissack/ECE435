@@ -20,16 +20,16 @@ for index = 1:images
     %read the row until the second label
     image = split(T{index,1});
     source = image(1) + ".pgm";
-    destination = "";
+    destination = image(1)+".png";
     if image(2)=="D"
         %put the image in file D
-        destination = "D";
+        destination = "D\"+destination;
     elseif image(2)=="F"
         %put the image in file F
-        destination = "F";
+        destination = "F\"+destination;
     elseif image(2)=="G"
         %put the image in file G
-        destination = "G";
+        destination = "G\"+destination;
     end
     %check that the file hasn't been moved already
     %deals with duplicates in the .txt file
@@ -82,15 +82,30 @@ end
 % created based on the names of the folders each sample is in. hint:
 % imageDatastore function. 
 
-imds = %TO-DO
+imds = imageDatastore({'D','F','G'}, 'FileExtensions', {'.png'},'LabelSource','foldernames');
 
 % show how many samples from each class there are. Ideally, the number of
 % samples per class should be approximately the same. hint: countEachLabel
 % function. 
-
+info = countEachLabel(imds)
+%%
 % Randomly split the image datastore into training and testing  
 train_percent=0.7;
-[imdsTrain,imdsTest]= %TO-DO
+
+shuffled = shuffle(imds);
+
+train_size = round(train_percent*size(imds.Files,1));
+test_size = size(imds.Files,1) - train_size;
+
+%not supported in 2018a
+% train = subset(shuffled, 1:train_size);
+% test = subset(shuffled, train_size+1: end);
+
+%partition splits into n datastores, it does not contain n images
+% train = partition(shuffled, train_size, 1);
+% test = partition(shuffled, test_size, train_size +1);
+
+
 
 %% Problem 4
 % 
@@ -164,6 +179,8 @@ I=img;
 
 % 1.resize the image to 224x224 (targetSize)
 I = imresize(I, targetSize);
+% figure(1);
+% imhist(I);
 
 %2. Turn the image to three-channel
 I3  = cat(3, I, I, I);
@@ -171,6 +188,8 @@ I3  = cat(3, I, I, I);
 %3 apply hist. eq. (hint: histeq function)
 result = histeq(I3);
 out = result;
+%figure(2);
+%imhist(result);
 
 end
 

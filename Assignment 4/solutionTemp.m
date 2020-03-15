@@ -14,7 +14,7 @@ filename = 'labels.txt';
 %can't use space as delimiter since there are different numbers of cols
 T = readtable(filename, 'TextType', 'string');
 
-images = size(T,1)
+images = size(T,1);
 
 for index = 1:images
     %read the row until the second label
@@ -39,8 +39,7 @@ for index = 1:images
 end
 
 %% Problem 2: Pre-process the data
-% pre-process all the data that is in the D, F, G folders (resize, turn to 3-channel
-% and do histogram eq.). See end of this script for a template of this function. 
+% pre-process all the data that is in the D, F, G folders
 % ensure matlab is NOT operating from D,F,G directories (should be level
 % containing them
 targetsize = [224,224];
@@ -48,7 +47,7 @@ targetsize = [224,224];
 F = dir('F')
 for i = 1:size(F,1)
     %for testing purposes
-    F(i).name
+    %F(i).name;
     imagename=char("F\"+F(i).name)
     if isfile(imagename)
         im = imread(imagename);
@@ -62,7 +61,6 @@ for i = 1:size(G,1)
     %for testing purposes
     imagename = char("G\"+G(i).name);
     if isfile(imagename)
-        
         image = preProcess(imread(imagename), targetsize);
         imwrite(image,imagename);
     end
@@ -88,34 +86,21 @@ imds = imageDatastore({'D','F','G'}, 'FileExtensions', {'.png'},'LabelSource','f
 % samples per class should be approximately the same. hint: countEachLabel
 % function. 
 info = countEachLabel(imds)
-%%
+
 % Randomly split the image datastore into training and testing  
 train_percent=0.7;
 
-shuffled = shuffle(imds);
-
-train_size = round(train_percent*size(imds.Files,1));
-test_size = size(imds.Files,1) - train_size;
-
-%not supported in 2018a
-% train = subset(shuffled, 1:train_size);
-% test = subset(shuffled, train_size+1: end);
-
-%partition splits into n datastores, it does not contain n images
-% train = partition(shuffled, train_size, 1);
-% test = partition(shuffled, test_size, train_size +1);
-
-
+[imdsTrain, imdsTest] = splitEachLabel(imds,train_percent, 'randomized');
 
 %% Problem 4
-% 
-% %extract HoG features
-% cellSize = [4 4];
-% [trainFeatures, trainLabels] = extractHOG(imdsTrain, cellSize); 
-% 
-% % Now extract the features for the test set
-% % TO-DO
-% 
+
+%extract HoG features
+cellSize = [4 4];
+[trainFeatures, trainLabels] = extractHOG(imdsTrain, cellSize); 
+
+% Now extract the features for the test set
+[testFeatures, testLabels] = extractHOG(imdsTest, cellSize);
+
 %% Problem 5: Train an SVM classifier based on the HoG features (hint: fitcecoc function)
 % disp('Training the SVM classifier...');
 % SVMclassifier = %TO-DO
@@ -179,8 +164,6 @@ I=img;
 
 % 1.resize the image to 224x224 (targetSize)
 I = imresize(I, targetSize);
-% figure(1);
-% imhist(I);
 
 %2. Turn the image to three-channel
 I3  = cat(3, I, I, I);
@@ -188,12 +171,19 @@ I3  = cat(3, I, I, I);
 %3 apply hist. eq. (hint: histeq function)
 result = histeq(I3);
 out = result;
-%figure(2);
-%imhist(result);
+%for testing pur
+% figure(1);
+% imshow(I,[]);
+% figure(2);
+% imhist(I);
+% figure(3);
+% imshow(result,[]);
+% figure(4);
+% imhist(result);
 
 end
 
-function [features, setLabels] = extractHOG(imds, cellSize)
+function [features, setLabels] = extractHOG(imds, ~)
 
 setLabels = imds.Labels;
 numImages = numel(imds.Files);

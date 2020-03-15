@@ -95,24 +95,24 @@ train_percent=0.7;
 %% Problem 4
 
 %extract HoG features
-cellSize = [4 4];
+cellSize = [8 8];
 [trainFeatures, trainLabels] = extractHOG(imdsTrain, cellSize); 
 
 % Now extract the features for the test set
 [testFeatures, testLabels] = extractHOG(imdsTest, cellSize);
 
 %% Problem 5: Train an SVM classifier based on the HoG features (hint: fitcecoc function)
-% disp('Training the SVM classifier...');
-% SVMclassifier = %TO-DO
-% 
-% disp('Testing the SVM classifier...');
-% % Make class predictions using the test features. hint(predict function)
-% predictedLabels = %TO-DO
-% 
-% % plot a confusion matrix to analyze the results
-% %TO-DO
-% title('Confusion Matrix for the SVM classifier using HoG features');
-% 
+disp('Training the SVM classifier...');
+SVMclassifier = %TO-DO
+
+disp('Testing the SVM classifier...');
+% Make class predictions using the test features. hint(predict function)
+predictedLabels = %TO-DO
+
+% plot a confusion matrix to analyze the results
+%TO-DO
+title('Confusion Matrix for the SVM classifier using HoG features');
+
 %% Problem 6: Split the training set into training and validation. That will help
 % % monito the progress of the training process. 
 % 
@@ -183,7 +183,7 @@ out = result;
 
 end
 
-function [features, setLabels] = extractHOG(imds, ~)
+function [features, setLabels] = extractHOG(imds, cellsize)
 
 setLabels = imds.Labels;
 numImages = numel(imds.Files);
@@ -191,11 +191,16 @@ numImages = numel(imds.Files);
 %pre-allocate an array to hold the features (determine its size, hogSize, by 
 %extracting the HoG from one image with cellSize
 
+%seems massive??
+hogSize = extractHOGFeatures(readimage(imds,1),'CellSize',cellsize);
+length(hogSize)
+
 features  = zeros(numImages, length(hogSize), 'single'); 
 
 % Extract the features from each image
 for j = 1:numImages
-    %TO-DO
+    img = readimage(imds,j);
+    features(j,:) = extractHOGFeatures(img,'CellSize',cellsize);
 end
 end
 

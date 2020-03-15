@@ -103,14 +103,14 @@ cellSize = [8 8];
 
 %% Problem 5: Train an SVM classifier based on the HoG features (hint: fitcecoc function)
 disp('Training the SVM classifier...');
-SVMclassifier = %TO-DO
+SVMclassifier = fitcecoc(trainFeatures, trainLabels);
 
 disp('Testing the SVM classifier...');
 % Make class predictions using the test features. hint(predict function)
-predictedLabels = %TO-DO
+predictedLabels = predict(SVMclassifier, testFeatures);
 
 % plot a confusion matrix to analyze the results
-%TO-DO
+plotconfusion(testLabels,predictedLabels);
 title('Confusion Matrix for the SVM classifier using HoG features');
 
 %% Problem 6: Split the training set into training and validation. That will help

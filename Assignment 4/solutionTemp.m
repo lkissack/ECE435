@@ -39,9 +39,44 @@ for index = 1:images
 end
 
 %% Problem 2: Pre-process the data
-% % pre-process all the data that is in the D, F, G folders (resize, turn to 3-channel
-% % and do histogram eq.). See end of this script for a template of this function. 
-% 
+% pre-process all the data that is in the D, F, G folders (resize, turn to 3-channel
+% and do histogram eq.). See end of this script for a template of this function. 
+% ensure matlab is NOT operating from D,F,G directories (should be level
+% containing them
+targetsize = [224,224];
+%for each image in F, D, G
+F = dir('F')
+for i = 1:size(F,1)
+    %for testing purposes
+    F(i).name
+    imagename=char("F\"+F(i).name)
+    if isfile(imagename)
+        im = imread(imagename);
+        image = preProcess(im , targetsize);
+        imwrite(image,imagename);
+    end
+end
+
+G = dir('G')
+for i = 1:size(G,1)
+    %for testing purposes
+    imagename = "G\"+G(i).name;
+    if isfile(imagename)
+        image = preProcess(G(i), targetsize);
+        imwrite(image,imagename);
+    end
+end
+
+D = dir('D')
+for i = 1:size(D,1)
+    %for testing purposes
+   imagename =  "D\"+D(i).name;
+    if isfile(imagename)
+        image = preProcess(D(i), targetsize);
+        imwrite(image,imagename);
+    end
+end
+
 %% Problem 3: Load all the data in a datastore. The categorical labels are going to be
 % % created based on the names of the folders each sample is in. hint:
 % % imageDatastore function. 
@@ -123,34 +158,34 @@ end
 % %TO-DO
 % title('Confusion matrix for the ResNet-based classifier');
 % 
-% function [out] = preProcess(img, targetSize)
-% I=img;
-% 
-% % 1.resize the image to 224x224 (targetSize)
-% %RESIZE
-% 
-% %2. Turn the image to three-channel
-% % TURN 3-CHANNEL
-% 
-% %3 apply hist. eq. (hint: histeq function)
-% 
-% out = result;
-% 
-% end
-% 
-% function [features, setLabels] = extractHOG(imds, cellSize)
-% 
-% setLabels = imds.Labels;
-% numImages = numel(imds.Files);
-% 
-% %pre-allocate an array to hold the features (determine its size, hogSize, by 
-% %extracting the HoG from one image with cellSize
-% 
-% features  = zeros(numImages, length(hogSize), 'single'); 
-% 
-% % Extract the features from each image
-% for j = 1:numImages
-%     %TO-DO
-% end
-% end
+function [out] = preProcess(img, targetSize)
+I=img;
+
+% 1.resize the image to 224x224 (targetSize)
+I = imresize(I, targetSize);
+
+%2. Turn the image to three-channel
+I3  = cat(3, I, I, I);
+
+%3 apply hist. eq. (hint: histeq function)
+result = histeq(I3);
+out = result;
+
+end
+
+function [features, setLabels] = extractHOG(imds, cellSize)
+
+setLabels = imds.Labels;
+numImages = numel(imds.Files);
+
+%pre-allocate an array to hold the features (determine its size, hogSize, by 
+%extracting the HoG from one image with cellSize
+
+features  = zeros(numImages, length(hogSize), 'single'); 
+
+% Extract the features from each image
+for j = 1:numImages
+    %TO-DO
+end
+end
 
